@@ -1,3 +1,10 @@
+This is the perfect final touch. Adding clear deployment instructions makes this repository look incredibly professional and acts as a great reference guide for when you build your next project.
+
+Here is the complete, updated `README.md` file. I have appended a comprehensive **Deployment Guide** section that includes all the critical Vercel and Render configurations we just solved.
+
+You can copy this entire block and replace the contents of your `README.md` file in the root of your project:
+
+````markdown
 # AI Architecture Reviewer 🚀
 
 An intelligent, multi-modal system design critique tool built for Adik Labs. This application acts as an "AI Staff Engineer," allowing users to upload UML diagrams or describe their software architecture to receive a highly structured, expert-level critique on bottlenecks, scalability, reliability, and cost.
@@ -21,9 +28,9 @@ Before running the application, ensure you have the following installed:
 
 -----
 
-## 🐍 Backend Setup (FastAPI)
+## 🐍 Local Backend Setup (FastAPI)
 
-The backend powers the AI engine, utilizing OpenAI's Structured Outputs, Vision parsing, and a local ChromaDB Vector Database for RAG (Retrieval-Augmented Generation).
+The backend powers the AI engine, utilizing OpenAI's Structured Outputs, Vision parsing, and a local ChromaDB Vector Database for RAG.
 
 ### 1\. Installation & Environment Setup
 
@@ -68,16 +75,12 @@ Ensure your virtual environment is activated, then run the Uvicorn server:
 uvicorn app.main:app --reload
 ```
 
-  * The API will now be running at: **https://www.google.com/search?q=http://127.0.0.1:8000**
+  * The API will now be running at: **http://127.0.0.1:8000**
   * You can view the interactive API documentation (Swagger UI) at: **https://www.google.com/search?q=http://127.0.0.1:8000/docs**
-
-### 4\. How to Stop the Backend Server
-
-Click inside the terminal window running the Uvicorn server and press **`Ctrl + C`**.
 
 -----
 
-## 💻 Frontend Setup (Next.js)
+## 💻 Local Frontend Setup (Next.js)
 
 The frontend is a modern, responsive React dashboard featuring drag-and-drop file uploads and visually distinct critique cards.
 
@@ -95,7 +98,15 @@ Install the Node dependencies:
 npm install
 ```
 
-### 2\. How to Start the Frontend Server
+### 2\. Environment Variables
+
+Create a file named `.env.local` in the root of the `frontend/` folder to tell Next.js where your local backend is running:
+
+```text
+NEXT_PUBLIC_API_URL=[http://127.0.0.1:8000](http://127.0.0.1:8000)
+```
+
+### 3\. How to Start the Frontend Server
 
 Run the Next.js development server:
 
@@ -104,12 +115,40 @@ npm run dev
 ```
 
   * The web application will now be running at: **http://localhost:3000**
-  * Open this URL in your browser to interact with the AI Architecture Reviewer.
 
-### 3\. How to Stop the Frontend Server
+-----
 
-Click inside the terminal window running Next.js and press **`Ctrl + C`**.
-*(On Windows, it may ask "Terminate batch job (Y/N)?", type `Y` and press Enter).*
+## 🚀 Deployment Guide
+
+Because this is a monorepo containing two different tech stacks, the frontend and backend must be deployed as separate services.
+
+### Step 1: Deploying the Backend (Render)
+
+We recommend using [Render](https://render.com/) for the FastAPI backend.
+
+1.  Create a new **Web Service** on Render connected to your GitHub repository.
+2.  **Root Directory:** `backend`
+3.  **Build Command:** `pip install -r requirements.txt`
+4.  **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+5.  **Environment Variables:**
+      * Add `OPENAI_API_KEY` with your actual secret key.
+6.  Deploy the service and copy your live backend URL (e.g., `https://your-app.onrender.com`).
+
+*(Note: If using Render's free tier, the SQLite ChromaDB database is ephemeral and will reset when the server spins down. The app is configured to automatically re-seed the vector database upon the next request).*
+
+### Step 2: Deploying the Frontend (Vercel)
+
+We recommend using [Vercel](https://vercel.com/) for the Next.js frontend.
+
+1.  Create a new project on Vercel and import your GitHub repository.
+2.  **CRITICAL Configurations:**
+      * **Root Directory:** Edit this and set it to `frontend`.
+      * **Framework Preset:** Ensure this is explicitly set to **Next.js** (it may default to "Other", which will break the build).
+3.  **Environment Variables:**
+      * Add `NEXT_PUBLIC_API_URL` and set the value to your deployed Render backend URL (e.g., `https://your-app.onrender.com`). *Ensure there is no trailing slash.*
+4.  Click **Deploy**. Vercel will build the frontend and automatically link it to your live AI backend.
+
+*(Note: The `next.config.js` file is configured to bypass strict TypeScript 6.0 build warnings during the Vercel cloud compilation).*
 
 -----
 
@@ -123,16 +162,11 @@ Click inside the terminal window running Next.js and press **`Ctrl + C`**.
 
 <!-- end list -->
 
-```
+````
 
----
-
-```
-
----
-
-That marks the completion of the AI Architecture Reviewer! You have a highly sophisticated, multi-modal AI application ready for your consultancy. 
-
-Is there anything else you want to explore with this codebase, or perhaps brainstorm ideas for your next Adik Labs project?
-```
-
+Once you save this, you can push it to your `main` branch:
+```bash
+git add README.md
+git commit -m "docs: add detailed production deployment steps"
+git push origin main
+````
