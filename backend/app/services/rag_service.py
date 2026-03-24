@@ -5,6 +5,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# --- NEW: Ensure the data directory exists before Chroma tries to use it ---
+os.makedirs("./data", exist_ok=True)
+
+# Initialize ChromaDB persistent client
+chroma_client = chromadb.PersistentClient(path="./data/chroma_db")
+
 # Initialize ChromaDB persistent client
 # This creates a SQLite database locally inside your 'data' folder
 chroma_client = chromadb.PersistentClient(path="./data/chroma_db")
