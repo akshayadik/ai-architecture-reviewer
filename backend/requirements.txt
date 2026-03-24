@@ -1,0 +1,15 @@
+# Core API Framework
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Data Validation & Config
+pydantic
+pydantic-settings
+
+# AI & RAG Engine
+openai
+chromadb
+
+# Utilities
+python-dotenv
